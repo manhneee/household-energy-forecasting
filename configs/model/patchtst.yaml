@@ -1,0 +1,12 @@
+name: patchtst
+patch_len: 16
+stride: 8
+d_model: 64
+n_heads: 4
+n_layers: 2
+dropout: 0.2
+lr: 0.001
+batch_size: 64
+max_epochs: 40
+patience: 8
+status: planned

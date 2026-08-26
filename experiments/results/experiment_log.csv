@@ -1,0 +1,4 @@
+timestamp_utc,experiment_id,seed,config_path,config_hash,git_commit,mae,rmse,smape,wape,mase,n_households,train_seconds,infer_seconds,n_params,peak_gpu_mb,notes
+2026-08-22T06:24:23.222202+00:00,E01,0,configs/experiment/e01_seasonal_naive.yaml,794f180faab4,unknown,0.05108597759768888,0.06415305403031034,11.597848235621735,0.07990048993257107,0.6962076003366696,6,0.0,2.23,0,,Seasonal naive — copy the previous day's 24 hours.
+2026-08-22T06:24:53.508150+00:00,E04b,0,configs/experiment/e04b_lstm_smoke.yaml,5792ba379b5e,unknown,0.03721126288578832,0.046877975431760095,8.517954458846692,0.058329276419742816,0.5071208432817321,6,17.374,2.608,16336,,Smoke run of global weather-aware LSTM on the demo panel.
+2026-08-22T06:39:14.154113+00:00,E01,0,configs/experiment/e01_seasonal_naive.yaml,794f180faab4,unknown,0.2549230948797919,0.4999623695869748,39.774092996365404,0.5368483223536339,1.0067498081691513,17,0.0,15.875,0,,Seasonal naive — copy the previous day's 24 hours.

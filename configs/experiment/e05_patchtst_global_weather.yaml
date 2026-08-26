@@ -1,0 +1,9 @@
+id: E05
+description: PatchTST global with selected weather. Swap to iTransformer only if weather does not help.
+model: patchtst
+model_config: configs/model/patchtst.yaml
+weather_set: selected
+graph: none
+mode: global
+seeds: [0, 1, 2]
+personalization: null

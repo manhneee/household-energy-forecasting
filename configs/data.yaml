@@ -1,0 +1,56 @@
+dataset:
+  name: REFIT
+  source: kyleahmurphy/uk-electrical-load
+  citation: "Murray, Stankovic, and Stankovic (2017), Scientific Data 4:160122"
+  location: Loughborough, United Kingdom
+
+# House IDs are 1-21 with no House 14. The loader discovers files; this list
+# is the scientific exclusion, not a substitute for reading the directory.
+exclusions:
+  solar_contaminated: [3, 11, 21]
+  # Houses 1, 6, 7 were rewired to remove PV from the aggregate and stay in.
+
+paths:
+  # Override on Kaggle if the mount is nested, e.g.
+  # /kaggle/input/uk-electrical-load/REFIT
+  raw_dir: data/raw
+  kaggle_raw_dir: /kaggle/input/uk-electrical-load
+  processed_dir: data/processed
+  weather_dir: data/weather
+  reports_dir: reports
+  figures_dir: reports/figures
+
+aggregation:
+  freq: 1h
+  # hourly_kwh = mean(watts) / 1000
+  # Raw 8-second sampling gives ~450 samples per hour. Hours built from a
+  # handful of readings are marked missing rather than trusted as a mean.
+  min_samples_per_hour: 90
+  # Cleaned REFIT fills gaps > 2 minutes with zeros. An hour whose mean is
+  # exactly 0 W with enough samples is treated as a filled outage.
+  treat_zero_hours_as_missing: true
+
+quality:
+  coverage_threshold: 0.80
+  max_impute_hours: 3
+  # If one house collapses the intersection below this, drop the house
+  # rather than the window and record the decision in data_quality.md.
+  min_common_months: 12
+
+task:
+  lookback_hours: 168
+  horizon_hours: 24
+  target_column: kwh
+  resolution: 1h
+
+split:
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  # chronological on the common timeline; never shuffle rows
+  method: chronological
+
+e10_holdout:
+  # Chosen after EDA so the four houses are not all the same size/occupancy.
+  # Placeholder IDs; confirm in Week 1 once coverage is known.
+  households: [2, 8, 16, 20]

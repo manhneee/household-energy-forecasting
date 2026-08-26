@@ -1,0 +1,22 @@
+name: household-forecast
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.11
+  - numpy>=1.24
+  - pandas>=2.0
+  - pyyaml>=6.0
+  - requests>=2.31
+  - pyarrow>=14.0
+  - scikit-learn>=1.3
+  - scipy>=1.11
+  - matplotlib>=3.8
+  - seaborn>=0.13
+  - statsmodels>=0.14
+  - tqdm>=4.66
+  - pytest>=8.0
+  - pip
+  - pip:
+      - torch>=2.1
+      - optuna>=3.5

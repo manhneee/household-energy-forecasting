@@ -1,0 +1,9 @@
+id: E04
+description: LSTM trained on all households, no weather.
+model: lstm
+model_config: configs/model/lstm.yaml
+weather_set: none
+graph: none
+mode: global
+seeds: [0, 1, 2]
+personalization: null

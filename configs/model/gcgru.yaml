@@ -1,0 +1,13 @@
+name: gcgru
+hidden_size: 64
+num_layers: 1
+dropout: 0.2
+lr: 0.001
+batch_size: 16
+max_epochs: 40
+patience: 8
+graph:
+  type: pearson_knn
+  k: 3
+  # Built on train timestamps only.
+status: planned

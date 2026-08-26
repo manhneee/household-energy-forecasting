@@ -1,0 +1,39 @@
+# Data (REFIT is ~2 GB; weather cache is regenerated)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+data/weather/*
+!data/weather/.gitkeep
+!data/weather/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Notebooks / IDE
+.ipynb_checkpoints/
+.idea/
+.vscode/
+*.swp
+
+# Experiment artifacts (keep the log schema, not every run dump)
+experiments/results/*.json
+experiments/results/*.pkl
+experiments/results/*.pt
+reports/figures/*.png
+reports/figures/*.pdf
+
+# OS
+.DS_Store
+Thumbs.db

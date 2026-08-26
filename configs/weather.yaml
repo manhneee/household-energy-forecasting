@@ -1,0 +1,39 @@
+open_meteo:
+  endpoint: https://archive-api.open-meteo.com/v1/archive
+  docs: https://open-meteo.com/en/docs/historical-weather-api
+  latitude: 52.7721
+  longitude: -1.2052
+  # Request UTC. REFIT DateTime is localized as Europe/London then converted.
+  timezone: UTC
+  local_timezone: Europe/London
+  hourly:
+    - temperature_2m
+    - shortwave_radiation
+    - relative_humidity_2m
+  cache_name: loughborough_era5_hourly.parquet
+  metadata_name: loughborough_era5_meta.json
+
+# Future weather on the 24-hour horizon is the same ERA5 series (oracle).
+# Operational 2014 forecasts cannot be reconstructed; Historical Forecast
+# API coverage starts ~2021-2022.
+future_weather: era5_oracle
+
+sets:
+  none: []
+  temperature:
+    - temperature_2m
+  selected:
+    - temperature_2m
+    - shortwave_radiation
+    - relative_humidity_2m
+
+calendar:
+  hour: true
+  day_of_week: true
+  month: true
+  uk_bank_holiday: true
+
+alignment_check:
+  # After merge, daily shortwave peak should sit near local noon.
+  expected_local_hour: 12
+  tolerance_hours: 2

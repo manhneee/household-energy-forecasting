@@ -1,0 +1,9 @@
+id: E04b
+description: Smoke run of global weather-aware LSTM on the demo panel.
+model: lstm
+model_config: configs/model/lstm_smoke.yaml
+weather_set: selected
+graph: none
+mode: global
+seeds: [0]
+personalization: null

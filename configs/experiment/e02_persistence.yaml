@@ -1,0 +1,9 @@
+id: E02
+description: Persistence — last observed hour, 1-step diagnostic only.
+model: persistence
+model_config: configs/model/naive.yaml
+weather_set: none
+graph: none
+seeds: [0]
+horizon_hours: 1
+personalization: null

@@ -1,0 +1,9 @@
+id: E07
+description: GCGRU / T-GCN, selected weather, train-only Pearson kNN graph.
+model: gcgru
+model_config: configs/model/gcgru.yaml
+weather_set: selected
+graph: pearson_knn
+mode: graph
+seeds: [0, 1, 2]
+personalization: null

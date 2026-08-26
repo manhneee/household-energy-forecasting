@@ -1,0 +1,8 @@
+id: E01
+description: Seasonal naive — copy the previous day's 24 hours.
+model: naive
+model_config: configs/model/naive.yaml
+weather_set: none
+graph: none
+seeds: [0]
+personalization: null
