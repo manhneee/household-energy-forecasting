@@ -1,6 +1,6 @@
 # Đồ thị giữa các hộ
 
-GNN **chưa train**. Ba builder đã có để RQ3 không bị bịa graph lúc viết model.
+GNN **đã train** E06/E07 trên Pearson kNN train-only (k=3). Metadata builder có; AGCRN adaptive **stub**. Kết quả: E07 MAE 0,230 kém E04b 0,225 (RQ1 âm trên N=17).
 
 ## Bốn họ graph trong literature — REFIT cho phép cái nào
 

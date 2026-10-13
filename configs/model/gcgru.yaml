@@ -10,4 +10,4 @@ graph:
   type: pearson_knn
   k: 3
   # Built on train timestamps only.
-status: planned
+status: implemented

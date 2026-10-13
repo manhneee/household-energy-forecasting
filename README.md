@@ -47,6 +47,7 @@ src/                importable library — notebooks stay thin
   data/             load, aggregate, quality, split, window, features
   weather/          Open-Meteo cache + UTC check
   graphs/           Pearson, metadata similarity, adaptive stub
+  train/            seeds, experiment log, lstm/patchtst/gcgru/personalize runs
   models/           naive now; LSTM / PatchTST / GCGRU later
   train/            seeds, experiment log
   eval/             masked metrics, plots
@@ -133,9 +134,11 @@ Kaggle limits: 12 hours CPU / 12 hours GPU, ~30 GB disk, P100/T4 GPU. Hourly N�
 | E05 | PatchTST global | yes | no |
 | E06 | GCGRU / T-GCN | no | train-only Pearson |
 | E07 | GCGRU / T-GCN | yes | train-only Pearson |
-| E08 | Few-shot P0/P1/P2 of E04b and E07 | yes | as source |
+| E08 | Few-shot P0/P1/P2 of E04b (E07 optional) | yes | as source |
 | E09 | One TSFM (Chronos-2, else TiRex-2, else TTM) | yes if supported | no |
 | E10 | Leave-4-households-out transfer | yes | Pearson |
+
+**REFIT status (2026-09-17):** E01–E07 have 3-seed numbers; E08 has seed 0 curve (P1@K=90 best). See `reports/bao-cao-toan-bo.html`. E09–E10 and Wilcoxon export still open.
 
 Every trained model uses seeds `{0, 1, 2}`. Naive baselines run once.
 

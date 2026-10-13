@@ -52,7 +52,7 @@ Không được ước lượng trên full series "vì N nhỏ":
 
 Test leak trong `tests/test_leakage.py`: đầu độc test bằng spike khổng lồ. Graph train-only không đổi; graph fit all-split thì correlation sập về ~1.
 
-## Personalization (chưa implement, đã chốt protocol)
+## Personalization (đã implement E08 seed 0)
 
 ```text
 |-------- train --------|--- val ---|-- adapt K --|---- test ----|
@@ -63,9 +63,9 @@ K ∈ {1, 7, 30, 90}. Adapt **không** chồng test. Early stopping P1/P2 = 20% 
 
 P0 đóng băng global. P1 chỉ head + household embedding. P2 full, LR = 1/10.
 
-K=1 ngày = 24 **target**. Lookback 168h lấy context từ trước cửa sổ adapt (val/cuối train). Hợp lệ vì là quá khứ của target. Đưa giờ test vào input hoặc early stop = leak.
+K=1 ngày = 24 **target**. Lookback 168h lấy context từ trước cửa sổ adapt (val/cuối train). Hợp lệ vì là quá khứ của target.
 
-Hàm `adaptation_window()` đã có trong `splits.py`. Vòng fine-tune chưa viết (`12-chu-chua-viet.md`).
+Code: `adaptation_window()` trong `splits.py`; vòng fine-tune `src/train/personalize.py`. Số: P1@K=90 tốt nhất (MAE 0,221); P2@K=1 hơi xấu.
 
 ## E10
 

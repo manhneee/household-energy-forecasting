@@ -5,8 +5,9 @@ d_model: 64
 n_heads: 4
 n_layers: 2
 dropout: 0.2
+household_embedding_dim: 8
 lr: 0.001
 batch_size: 64
 max_epochs: 40
 patience: 8
-status: planned
+status: implemented

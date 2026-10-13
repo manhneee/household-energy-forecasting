@@ -30,6 +30,29 @@ def drop_crossing_windows(
     return origin[mask]
 
 
+def origins_in_target_span(
+    origin: pd.DatetimeIndex,
+    lookback: int,
+    horizon: int,
+    target_start: pd.Timestamp,
+    target_end: pd.Timestamp,
+    allow_lookback_before: bool = True,
+) -> pd.DatetimeIndex:
+    """Keep origins whose *horizon* lies in [target_start, target_end].
+
+    Lookback may start before ``target_start`` (allowed for adaptation: past
+    relative to the targets). Inputs must still be after the panel start is
+    enforced by the caller via finite-history checks.
+    """
+    origin = pd.DatetimeIndex(origin)
+    last_target = origin + pd.Timedelta(hours=horizon - 1)
+    first_input = origin - pd.Timedelta(hours=lookback)
+    mask = (origin >= target_start) & (last_target <= target_end)
+    if not allow_lookback_before:
+        mask = mask & (first_input >= target_start)
+    return origin[mask]
+
+
 def extract_windows(
     series: pd.Series,
     origins: pd.DatetimeIndex,

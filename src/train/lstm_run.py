@@ -104,6 +104,7 @@ def _run_individual(panel, split, households, history_cols, future_cols, lookbac
     train_seconds = 0.0
     n_params = 0
     for hid in households:
+        print(f"E03-style individual  house={hid}  seed={seed}", flush=True)
         sub = panel[panel["household_id"] == hid].copy()
         scaled, scaler = _scale_panel(sub, history_cols, future_cols)
         hid_to_idx = {hid: 0}

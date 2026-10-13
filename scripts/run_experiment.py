@@ -1,4 +1,4 @@
-"""Run one experiment YAML. v0.2.0: E01, E02, and the LSTM 2x2 (E03–E04b)."""
+"""Run one experiment YAML. v0.2.x: E01–E07 + E08 few-shot."""
 
 from __future__ import annotations
 
@@ -15,7 +15,10 @@ from src.config import load_data_config, load_experiment
 from src.data.pipeline import load_processed_panel
 from src.eval.baselines import evaluate_naive
 from src.train.experiment_log import append_result, config_hash
+from src.train.gcgru_run import run_gcgru
 from src.train.lstm_run import run_lstm
+from src.train.patchtst_run import run_patchtst
+from src.train.personalize import run_personalize
 from src.train.seeds import set_seed
 
 
@@ -26,24 +29,8 @@ def _kind(exp: dict) -> str:
     return str(model or "")
 
 
-def run_one(exp: dict, data_cfg: dict, seed: int, config_path: str) -> dict:
-    set_seed(int(seed))
-    panel, split = load_processed_panel(data_cfg)
-    kind = _kind(exp)
-    t0 = time.perf_counter()
-    if kind in {"naive", "persistence"} or exp.get("id") in {"E01", "E02"}:
-        metrics = evaluate_naive(panel, split, exp, data_cfg)
-        metrics["train_seconds"] = 0.0
-        metrics["n_params"] = 0
-        metrics["n_households"] = int(panel["household_id"].nunique())
-    elif kind == "lstm":
-        metrics = run_lstm(panel, split, exp, data_cfg, seed=int(seed))
-    else:
-        raise NotImplementedError(
-            f"{exp.get('id')} ({kind}) is not implemented yet. "
-            "v0.2.0 covers E01, E02, and E03–E04b."
-        )
-    elapsed = time.perf_counter() - t0
+def _append(exp: dict, seed: int, config_path: str, metrics: dict, elapsed: float) -> None:
+    train_s = float(metrics.get("train_seconds", 0.0))
     row = {
         "experiment_id": exp["id"],
         "seed": seed,
@@ -55,14 +42,46 @@ def run_one(exp: dict, data_cfg: dict, seed: int, config_path: str) -> dict:
         "wape": metrics.get("wape"),
         "mase": metrics.get("mase"),
         "n_households": metrics.get("n_households"),
-        "train_seconds": round(float(metrics.get("train_seconds", 0.0)), 3),
-        "infer_seconds": round(elapsed - float(metrics.get("train_seconds", 0.0)), 3),
+        "train_seconds": round(train_s, 3),
+        "infer_seconds": round(max(0.0, elapsed - train_s), 3),
         "n_params": metrics.get("n_params", 0),
-        "notes": exp.get("description", ""),
+        "notes": metrics.get("notes") or exp.get("description", ""),
     }
     append_result(row)
-    print(exp["id"], f"seed={seed}", {k: metrics.get(k) for k in ("mae", "rmse", "wape", "mase")})
-    return metrics
+    print(exp["id"], f"seed={seed}", {k: metrics.get(k) for k in ("mae", "rmse", "wape", "mase")}, metrics.get("notes", ""))
+
+
+def run_one(exp: dict, data_cfg: dict, seed: int, config_path: str) -> list[dict]:
+    set_seed(int(seed))
+    panel, split = load_processed_panel(data_cfg)
+    kind = _kind(exp)
+    mode = exp.get("mode")
+    t0 = time.perf_counter()
+    if kind in {"naive", "persistence"} or exp.get("id") in {"E01", "E02"}:
+        metrics = evaluate_naive(panel, split, exp, data_cfg)
+        metrics["train_seconds"] = 0.0
+        metrics["n_params"] = 0
+        metrics["n_households"] = int(panel["household_id"].nunique())
+        results = [metrics]
+    elif mode == "personalize" or exp.get("id") == "E08":
+        results = run_personalize(panel, split, exp, data_cfg, seed=int(seed))
+    elif kind == "lstm":
+        results = [run_lstm(panel, split, exp, data_cfg, seed=int(seed))]
+    elif kind == "patchtst":
+        results = [run_patchtst(panel, split, exp, data_cfg, seed=int(seed))]
+    elif kind == "gcgru":
+        results = [run_gcgru(panel, split, exp, data_cfg, seed=int(seed))]
+    else:
+        raise NotImplementedError(
+            f"{exp.get('id')} ({kind}/{mode}) is not implemented yet. "
+            "v0.2.x covers E01–E08."
+        )
+    elapsed = time.perf_counter() - t0
+    # Share wall time across multi-row E08 logs for infer_seconds bookkeeping.
+    per = elapsed / max(len(results), 1)
+    for metrics in results:
+        _append(exp, seed, config_path, metrics, per if len(results) > 1 else elapsed)
+    return results
 
 
 def main() -> None:

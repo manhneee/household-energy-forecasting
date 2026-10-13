@@ -4,7 +4,21 @@ All notable changes to this project are recorded here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 Versioning follows [SemVer](https://semver.org/).
 
-## [0.2.0] - 2026-08-22
+## [0.3.0] - 2026-09-17
+
+### Added
+
+- PatchTST global (E05) and GCGRU / T-GCN on train-only Pearson kNN (E06, E07).
+- Few-shot personalization P0/P1/P2 (E08) on pretrained E04b; K ∈ {1,7,30,90}.
+- Graph-synchronized windows (`src/data/graph_dataset.py`).
+
+### Results (REFIT N=17, aggregate MAE, observed hours)
+
+- E04b LSTM global + weather: 0.225 (3 seeds). E05 PatchTST: 0.219.
+- E07 GCGRU + weather: 0.230 — does not beat E04b (RQ1 negative on N=17).
+- E08 seed 0: P1 at K=90 best (0.221); P2 at K=1 slightly worse than frozen (0.227).
+
+## [0.2.0] - 2026-09-01
 
 ### Added
 

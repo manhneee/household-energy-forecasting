@@ -33,14 +33,62 @@ def build_windows(
     future_cols: list[str],
 ) -> WindowBatch:
     """Slice windows by integer offset on the dense hourly grid (no leakage across splits)."""
+    return _build_windows_with_origins(
+        panel,
+        household_ids,
+        lookback,
+        horizon,
+        history_cols,
+        future_cols,
+        origin_fn=lambda ts: drop_crossing_windows(ts, lookback, horizon, split, which),
+        label=which,
+    )
+
+
+def build_windows_in_span(
+    panel: pd.DataFrame,
+    household_ids: list[int],
+    lookback: int,
+    horizon: int,
+    history_cols: list[str],
+    future_cols: list[str],
+    target_start: pd.Timestamp,
+    target_end: pd.Timestamp,
+) -> WindowBatch:
+    """Windows whose horizon lies in [target_start, target_end]; lookback may precede start."""
+    from src.data.windowing import origins_in_target_span
+
+    return _build_windows_with_origins(
+        panel,
+        household_ids,
+        lookback,
+        horizon,
+        history_cols,
+        future_cols,
+        origin_fn=lambda ts: origins_in_target_span(
+            ts, lookback, horizon, target_start, target_end, allow_lookback_before=True
+        ),
+        label=f"span[{target_start}..{target_end}]",
+    )
+
+
+def _build_windows_with_origins(
+    panel: pd.DataFrame,
+    household_ids: list[int],
+    lookback: int,
+    horizon: int,
+    history_cols: list[str],
+    future_cols: list[str],
+    origin_fn,
+    label: str,
+) -> WindowBatch:
     xs, futs, ys, masks, hids = [], [], [], [], []
     for hid in household_ids:
         g = panel[panel["household_id"] == hid].sort_values("timestamp").reset_index(drop=True)
         ts = pd.DatetimeIndex(g["timestamp"])
-        origins = drop_crossing_windows(ts, lookback, horizon, split, which)
+        origins = origin_fn(ts)
         if origins.empty:
             continue
-        # Dense hourly grid: origin timestamp -> row index of first forecast hour.
         index_of = {t: i for i, t in enumerate(ts)}
         hist = g[history_cols].to_numpy(dtype=float)
         fut = g[future_cols].to_numpy(dtype=float) if future_cols else np.zeros((len(g), 0))
@@ -48,6 +96,8 @@ def build_windows(
         observed = g["observed"].to_numpy(dtype=bool)
         for t0 in origins:
             i = index_of[pd.Timestamp(t0)]
+            if i < lookback or i + horizon > len(g):
+                continue
             sl_x = slice(i - lookback, i)
             sl_y = slice(i, i + horizon)
             x = hist[sl_x]
@@ -62,7 +112,7 @@ def build_windows(
             masks.append(observed[sl_y])
             hids.append(hid)
     if not xs:
-        raise RuntimeError(f"No valid {which} windows for households {household_ids}")
+        raise RuntimeError(f"No valid {label} windows for households {household_ids}")
     return WindowBatch(
         x=np.stack(xs),
         future=np.stack(futs),

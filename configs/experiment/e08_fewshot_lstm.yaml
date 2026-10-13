@@ -1,0 +1,13 @@
+id: E08
+description: Few-shot P0/P1/P2 of global weather LSTM (E04b), K in {1,7,30,90}.
+model: lstm
+model_config: configs/model/lstm.yaml
+weather_set: selected
+graph: none
+mode: personalize
+seeds: [0, 1, 2]
+personalization:
+  protocols: [P0, P1, P2]
+  k_days: [1, 7, 30, 90]
+  max_epochs: 20
+  lr_scale: 0.1

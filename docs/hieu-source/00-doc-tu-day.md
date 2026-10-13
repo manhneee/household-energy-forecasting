@@ -13,7 +13,7 @@ Thư mục này giải thích **toàn bộ code hiện có**: mỗi phần làm 
 | [04-thoi-tiet-va-lich.md](04-thoi-tiet-va-lich.md) | Open-Meteo, UTC, calendar |
 | [05-split-window-leakage.md](05-split-window-leakage.md) | Cắt thời gian, cửa sổ 168/24, cấm gì |
 | [06-feature-va-scaler.md](06-feature-va-scaler.md) | Cột nào vào model, scale ở đâu |
-| [07-mo-hinh.md](07-mo-hinh.md) | Naive, LSTM, stub PatchTST/GCGRU |
+| [07-mo-hinh.md](07-mo-hinh.md) | Naive, LSTM, PatchTST, GCGRU, E08 |
 | [08-do-thi.md](08-do-thi.md) | Pearson, metadata, adaptive |
 | [09-train-va-danh-gia.md](09-train-va-danh-gia.md) | Loss, early stopping, metrics, log |
 | [10-config-va-experiment.md](10-config-va-experiment.md) | YAML, scripts, notebook |

@@ -11,8 +11,7 @@ from torch.utils.data import DataLoader
 
 from src.data.dataset import ForecastDataset
 from src.data.scalers import HouseLoadScaler
-from src.eval.metrics import masked_metrics
-from src.models.lstm import LSTMForecaster
+from src.eval.metrics import masked_metrics, per_household_mae_arrays
 
 
 def masked_mse(pred: torch.Tensor, target: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
@@ -38,7 +37,7 @@ def make_loader(dataset: ForecastDataset, batch_size: int, shuffle: bool, seed: 
 
 
 @torch.no_grad()
-def predict_dataset(model: LSTMForecaster, dataset: ForecastDataset, batch_size: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+def predict_dataset(model: torch.nn.Module, dataset: ForecastDataset, batch_size: int) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     model.eval()
     device = next(model.parameters()).device
     preds, trues, masks, hids = [], [], [], []
@@ -61,7 +60,7 @@ def predict_dataset(model: LSTMForecaster, dataset: ForecastDataset, batch_size:
 
 
 def evaluate_kwh(
-    model: LSTMForecaster,
+    model: torch.nn.Module,
     dataset: ForecastDataset,
     scaler: HouseLoadScaler,
     batch_size: int,
@@ -72,11 +71,13 @@ def evaluate_kwh(
     hid_h = np.repeat(hids, pred_s.shape[1])
     pred = scaler.inverse(pred_s.ravel(), hid_h).reshape(pred_s.shape)
     true = scaler.inverse(true_s.ravel(), hid_h).reshape(true_s.shape)
-    return masked_metrics(true, pred, mask=mask, y_insample=y_insample, seasonality=24)
+    metrics = masked_metrics(true, pred, mask=mask, y_insample=y_insample, seasonality=24)
+    metrics["per_house_mae"] = per_household_mae_arrays(true, pred, hids, mask)
+    return metrics
 
 
 def train_model(
-    model: LSTMForecaster,
+    model: torch.nn.Module,
     train_set: ForecastDataset,
     val_set: ForecastDataset,
     scaler: HouseLoadScaler,
@@ -87,7 +88,7 @@ def train_model(
     patience: int,
     seed: int,
     y_insample: np.ndarray | None = None,
-) -> tuple[LSTMForecaster, dict]:
+) -> tuple[torch.nn.Module, dict]:
     device = _device()
     model = model.to(device)
     opt = torch.optim.Adam(model.parameters(), lr=lr)
@@ -97,6 +98,12 @@ def train_model(
     best_mae = float("inf")
     bad = 0
     t0 = time.perf_counter()
+    n_train = len(train_set)
+    print(
+        f"train start  device={device}  train_windows={n_train}  "
+        f"max_epochs={max_epochs}  patience={patience}",
+        flush=True,
+    )
     for epoch in range(1, max_epochs + 1):
         model.train()
         for x, fut, y, mask, hid in train_loader:
@@ -113,10 +120,20 @@ def train_model(
             best_mae = val["mae"]
             best_state = copy.deepcopy(model.state_dict())
             bad = 0
+            tag = "best"
         else:
             bad += 1
-            if bad >= patience:
-                break
+            tag = f"wait {bad}/{patience}"
+        elapsed = time.perf_counter() - t0
+        print(
+            f"epoch {epoch}/{max_epochs}  val_mae={val['mae']:.4f} kWh  "
+            f"best={best_mae:.4f}  {tag}  {elapsed:.0f}s",
+            flush=True,
+        )
+        if bad >= patience:
+            print(f"early stop at epoch {epoch}", flush=True)
+            break
     model.load_state_dict(best_state)
     elapsed = time.perf_counter() - t0
+    print(f"train done  best_val_mae={best_mae:.4f} kWh  {elapsed:.0f}s", flush=True)
     return model, {"train_seconds": elapsed, "best_val_mae": best_mae, "epochs": epoch}

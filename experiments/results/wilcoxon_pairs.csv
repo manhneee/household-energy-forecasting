@@ -1,0 +1,9 @@
+model_a,model_b,n,median_diff_a_minus_b,mean_diff_a_minus_b,wins_a_lower_mae,wins_b_lower_mae,ties,statistic,pvalue,seed,note
+E01,E04b,17,0.025600740496800473,0.030417333641577223,1,16,0,17.0,0.0031585693359375,0,diff = MAE_a - MAE_b; negative median => A better on typical house
+E01,E05,17,0.033635888419775384,0.03631333164783951,2,15,0,17.0,0.0031585693359375,0,diff = MAE_a - MAE_b; negative median => A better on typical house
+E04b,E05,17,0.0035080243901600416,0.005895998006262286,5,12,0,37.0,0.0638275146484375,0,diff = MAE_a - MAE_b; negative median => A better on typical house
+E04b,E07,17,-0.0026964253595328502,-0.002414995396269836,10,7,0,67.0,0.677703857421875,0,diff = MAE_a - MAE_b; negative median => A better on typical house
+E05,E07,17,-0.009289414961841908,-0.008310993402532121,13,4,0,40.0,0.088653564453125,0,diff = MAE_a - MAE_b; negative median => A better on typical house
+E04b,E08_P1_K90,17,0.0023635404813664995,0.0035047385284625275,6,11,0,44.0,0.1323699951171875,0,diff = MAE_a - MAE_b; negative median => A better on typical house
+E05,E08_P1_K90,17,0.0021996357435365016,-0.0023912594777997583,7,10,0,68.0,0.7118988037109375,0,diff = MAE_a - MAE_b; negative median => A better on typical house
+E01,E08_P1_K90,17,0.03587705709361491,0.03392207217003975,1,16,0,17.0,0.0031585693359375,0,diff = MAE_a - MAE_b; negative median => A better on typical house

@@ -85,3 +85,28 @@ def per_household_mae(frame: pd.DataFrame, truth="y_true", pred="y_pred", mask="
         m = g[mask].to_numpy() if mask in g.columns else None
         rows[int(hid)] = mae(g[truth], g[pred], m)
     return pd.Series(rows, name="mae")
+
+
+def per_household_mae_arrays(
+    y_true: np.ndarray,
+    y_pred: np.ndarray,
+    household_ids: np.ndarray,
+    mask: np.ndarray | None = None,
+) -> dict[int, float]:
+    """MAE per household from window arrays. ``household_ids`` is one id per window (row)."""
+    y_true = np.asarray(y_true, dtype=float)
+    y_pred = np.asarray(y_pred, dtype=float)
+    hids = np.asarray(household_ids).ravel()
+    if y_true.ndim == 1:
+        y_true = y_true.reshape(hids.shape[0], -1)
+        y_pred = y_pred.reshape(hids.shape[0], -1)
+    if mask is not None:
+        mask = np.asarray(mask, dtype=bool)
+        if mask.ndim == 1:
+            mask = mask.reshape(hids.shape[0], -1)
+    out: dict[int, float] = {}
+    for hid in sorted(set(int(x) for x in hids)):
+        idx = hids == hid
+        m = mask[idx] if mask is not None else None
+        out[int(hid)] = mae(y_true[idx], y_pred[idx], m)
+    return out

@@ -37,3 +37,10 @@ reports/figures/*.pdf
 # OS
 .DS_Store
 Thumbs.db
+
+# Advisor email drafts and weekly notes (keep only bao-cao-toan-bo)
+reports/email-thay-*.md
+reports/weekly_report_*.md
+reports/weekly_plan_*.md
+reports/nguyen-lieu-mail-thay.md
+reports/tong-hop-tu-dau.md

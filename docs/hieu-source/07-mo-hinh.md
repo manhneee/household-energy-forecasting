@@ -36,11 +36,15 @@ Cùng class `LSTMForecaster`. Khác nhau ở dữ liệu và số embedding.
 
 ## PatchTST — `src/models/patchtst.py`
 
-Stub. YAML E05 đã có. Implement sau khi LSTM 2×2 chạy trên REFIT. Vai trò: baseline Transformer **trained** (không phải TSFM). Có thể đổi iTransformer nếu weather không giúp PatchTST (benchmark lưới 2026).
+Đã implement (E05). Patch lookback theo thời gian (`patch_len=16`, `stride=8`), Transformer encoder, household embedding, future calendar + ERA5 vào MLP head (cùng hợp đồng với LSTM). Global + `selected` weather. Có thể đổi iTransformer nếu weather không giúp PatchTST (benchmark lưới 2026).
 
 ## GCGRU / T-GCN — `src/models/gcgru.py`
 
-Stub. Đây sẽ là model RQ1 phía GNN. Node = nhà, feature = load + weather chung. Graph = Pearson train-only. AGCRN adaptive chỉ ablation (N=17, graph học dễ overfit — Nguyen et al. 2025).
+Đã implement (E06/E07). Cell kiểu T-GCN: GCN trên input từng bước → GRU. Cửa sổ **đồng bộ** cả N nhà (`build_graph_windows`). Graph = Pearson kNN k=3 **train-only**. Future calendar + ERA5 vào MLP head (cùng hợp đồng LSTM/PatchTST). E06 = không weather; E07 = selected. **RQ1:** E07 (0,230) không thắng E04b (0,225). AGCRN adaptive chỉ ablation (stub).
+
+## Few-shot E08 — `src/train/personalize.py`
+
+Đã chạy seed 0 trên base E04b. P0/P1/P2 × K∈{1,7,30,90}. P1@K=90 tốt nhất (MAE 0,221). P2@K=1 hơi xấu.
 
 ## TSFM (E09)
 

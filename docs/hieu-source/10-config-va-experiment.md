@@ -18,7 +18,7 @@ Mỗi ô trong ma trận thí nghiệm = một file. So E04 và E04b = diff hai 
 | `model` + `model_config` | Loại mạng |
 | `weather_set` | `none` / `temperature` / `selected` |
 | `graph` | `none` / `pearson_knn` / … |
-| `mode` | `individual` / `global` / `graph` |
+| `mode` | `individual` / `global` / `graph` / `personalize` |
 | `seeds` | list |
 
 `src/config.py` `load_experiment()` merge model YAML vào `exp["model"]` và giữ `kind`.
@@ -28,14 +28,15 @@ Mỗi ô trong ma trận thí nghiệm = một file. So E04 và E04b = diff hai 
 | ID | Đã có code? | Đã chạy REFIT? |
 |----|-------------|----------------|
 | E01 seasonal naive | có | có (MAE 0.255 kWh) |
-| E02 persistence 1h | có | chưa |
-| E03 LSTM individual, no wx | có | chưa |
-| E03b LSTM individual, wx | có | chưa |
-| E04 LSTM global, no wx | có | chưa |
-| E04b LSTM global, wx | có | mới smoke demo |
-| E05 PatchTST | stub | không |
-| E06–E07 GCGRU | stub | không |
-| E08 P0/P1/P2 | protocol only | không |
+| E02 persistence 1h | có | có (MAE 0.230; horizon 1h) |
+| E03 LSTM individual, no wx | có | có (mean MAE 0.235) |
+| E03b LSTM individual, wx | có | có (mean MAE 0.237) |
+| E04 LSTM global, no wx | có | có (mean MAE 0.225) |
+| E04b LSTM global, wx | có | có (mean MAE 0.225) |
+| E05 PatchTST | có | có (mean MAE 0.219) |
+| E06 GCGRU, no wx | có | có (mean MAE 0.231) |
+| E07 GCGRU, wx | có | có (mean MAE 0.230; kém E04b) |
+| E08 P0/P1/P2 | có | có seed 0 (P1@90 = 0.221 tốt nhất) |
 | E09 TSFM | chưa | không |
 | E10 leave-4 | config placeholder | không |
 

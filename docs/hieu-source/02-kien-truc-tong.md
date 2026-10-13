@@ -51,9 +51,9 @@ Script gọi nó: `scripts/build_panel.py`.
 | `configs/` | Mọi số thí nghiệm (horizon, weather set, seed) | Không chứa logic |
 | `src/data/` | Từ CSV thô tới cửa sổ tensor | Không train |
 | `src/weather/` | ERA5 + cache + check noon | Không dự báo thời tiết riêng |
-| `src/graphs/` | Ma trận kề | Chưa gắn vào model (GNN còn stub) |
+| `src/graphs/` | Ma trận kề | Pearson gắn E06/E07; adaptive stub |
 | `src/models/` | Kiến trúc mạng / baseline | Không đọc file, không tính MAE |
-| `src/train/` | Vòng lặp, seed, log | Không định nghĩa metric |
+| `src/train/` | Vòng lặp, seed, log, personalize | Không định nghĩa metric |
 | `src/eval/` | MAE/WAPE, plot, Wilcoxon | Không update trọng số |
 | `scripts/` | Điểm vào CLI | Mỏng: import `src` |
 | `notebooks/` | Hiện kết quả | Cấm nhét model vào cell |
